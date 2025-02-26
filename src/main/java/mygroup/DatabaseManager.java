@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -79,7 +81,7 @@ public class DatabaseManager {
         List<String> configs = new ArrayList<String>();
         InputStream inputstream = Client.class.getClassLoader().getResourceAsStream("config.txt");
         if (inputstream == null) {
-            System.out.println("Error loading in file from resources");
+            throw new RuntimeException("Error loading in file from resources");
         }
         
         try (Scanner scanner = new Scanner(inputstream)) {
@@ -89,7 +91,7 @@ public class DatabaseManager {
             }
         }
         catch(Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error reading file from resources");
         }
         return configs;
     }
@@ -151,11 +153,11 @@ public class DatabaseManager {
                     
                     System.out.println("Data inserted successfully");
             } catch (SQLException e ) {
-                e.printStackTrace();
+                throw new RuntimeException("Error while executing SQL statement");
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error while connecting to MySQL");
         }
     }
     
@@ -176,12 +178,12 @@ public class DatabaseManager {
                    
                     convertResultSet(resultSet,query);
                 }catch (SQLException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException("Error while executing SQL query");
                 } 
             }
             
         }catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error while connecting to MySQL");
         }
     }
     
@@ -220,11 +222,11 @@ public class DatabaseManager {
                 writer.write(json);
                 System.out.println("Data written to result.json");
             } catch(IOException e) {
-                e.printStackTrace();
+                throw new RuntimeException("Error writing to result.json");
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error processing resultMap");
         }
     }
 }

@@ -54,8 +54,7 @@ public class Client {
     private void readURLS() {
         InputStream inputstream = Client.class.getClassLoader().getResourceAsStream("urls.txt");
         if (inputstream == null) {
-            System.out.println("Error loading in file from resources");
-            return;
+            throw new RuntimeException("Error loading in file from resources");
         }
         
         try (Scanner scanner = new Scanner(inputstream)) {
@@ -70,8 +69,8 @@ public class Client {
                 
             }
         }
-        catch(IOException | InterruptedException e) {
-            e.printStackTrace();
+        catch(Exception e) {
+            throw new RuntimeException("Error reading file from resources");
         }
     }
 
