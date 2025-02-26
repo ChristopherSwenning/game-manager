@@ -24,7 +24,7 @@
 # Don't ignore Java files in src/main/java/mygroup and its subdirectories
 !src/main/java/mygroup/**/*.java
 
-src/resources/
+src/main/resources/**
 
 !target/
 
