@@ -55,6 +55,7 @@ public class Client {
         InputStream inputstream = Client.class.getClassLoader().getResourceAsStream("urls.txt");
         if (inputstream == null) {
             System.out.println("Error loading in file from resources");
+            return;
         }
         
         try (Scanner scanner = new Scanner(inputstream)) {
@@ -69,7 +70,7 @@ public class Client {
                 
             }
         }
-        catch(Exception e) {
+        catch(IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
