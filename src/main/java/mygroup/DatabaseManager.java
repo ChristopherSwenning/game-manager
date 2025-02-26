@@ -91,7 +91,7 @@ public class DatabaseManager {
             }
         }
         catch(Exception e) {
-            throw new RuntimeException("Error reading file from resources");
+            throw new RuntimeException("Error processing file from resources", e);
         }
         return configs;
     }
@@ -153,11 +153,11 @@ public class DatabaseManager {
                     
                     System.out.println("Data inserted successfully");
             } catch (SQLException e ) {
-                throw new RuntimeException("Error while executing SQL statement");
+                throw new RuntimeException("Error while executing SQL statement", e);
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Error while connecting to MySQL");
+            throw new RuntimeException("Error while connecting to MySQL", e);
         }
     }
     
@@ -178,12 +178,12 @@ public class DatabaseManager {
                    
                     convertResultSet(resultSet,query);
                 }catch (SQLException e) {
-                    throw new RuntimeException("Error while executing SQL query");
+                    throw new RuntimeException("Error while executing SQL query", e);
                 } 
             }
             
         }catch (SQLException e) {
-            throw new RuntimeException("Error while connecting to MySQL");
+            throw new RuntimeException("Error while connecting to MySQL", e);
         }
     }
     
@@ -222,11 +222,11 @@ public class DatabaseManager {
                 writer.write(json);
                 System.out.println("Data written to result.json");
             } catch(IOException e) {
-                throw new RuntimeException("Error writing to result.json");
+                throw new RuntimeException("Error writing to result.json", e);
             }
 
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Error processing resultMap");
+            throw new RuntimeException("Error processing resultMap", e);
         }
     }
 }

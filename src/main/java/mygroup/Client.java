@@ -70,7 +70,7 @@ public class Client {
             }
         }
         catch(Exception e) {
-            throw new RuntimeException("Error reading file from resources");
+            throw new RuntimeException("Error processing url from resources", e);
         }
     }
 
