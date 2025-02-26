@@ -1,0 +1,35 @@
+# Ignore everything by default
+*
+
+# Don't ignore .gitignore itself
+!.gitignore
+
+# Don't ignore pom.xml, README.md, results.json
+!pom.xml
+!README.md
+!result.json
+
+# Don't ignore the src folder and its contents
+!src/
+
+# Don't ignore the src/main folder
+!src/main/
+
+# Don't ignore the src/main/java folder
+!src/main/java/
+
+# Don't ignore files in src/main/java/mygroup (this is where the Java files are)
+!src/main/java/mygroup/
+
+# Don't ignore Java files in src/main/java/mygroup and its subdirectories
+!src/main/java/mygroup/**/*.java
+
+src/resources/
+
+!target/
+
+!target/reports
+
+!target/reports/apidocs
+
+!target/reports/apidocs/index.html
