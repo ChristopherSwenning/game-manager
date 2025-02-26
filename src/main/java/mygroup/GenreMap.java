@@ -32,6 +32,7 @@ public class GenreMap {
         InputStream inputstream = Client.class.getClassLoader().getResourceAsStream("game_genres.txt");
         if (inputstream == null) {
             System.out.println("Error loading in file from resources");
+            return;
         }
         try (Scanner scanner = new Scanner(inputstream)) {
             while (scanner.hasNextLine()) {
