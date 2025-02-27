@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,7 +39,7 @@ public class DatabaseManager {
     public DatabaseManager(Client client, GenreMap genreMap) {
         this.client = client;
         this.genreMap = genreMap;
-        this.resultMap = new HashMap<String,String>();
+        this.resultMap = new LinkedHashMap<String,String>();
         sqlQueries = new ArrayList<String>();
         sqlQueries.add("""
                     SELECT SUM(minutes_played) AS minutes_played,genres 
