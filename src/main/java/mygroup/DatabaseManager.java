@@ -171,12 +171,13 @@ public class DatabaseManager {
             for (String query : sqlQueries) {
                 try(PreparedStatement selectStatement = conn.prepareStatement(query)) {
                     ResultSet resultSet = selectStatement.executeQuery();
-                    System.out.println("Data extracted successfully");
+                    
                     convertResultSet(resultSet,query);
                 }catch (SQLException e) {
                     throw new RuntimeException("Error while executing SQL query", e);
                 } 
             }
+            System.out.println("Data extracted successfully");
             
         }catch (SQLException e) {
             throw new RuntimeException("Error while connecting to MySQL", e);
