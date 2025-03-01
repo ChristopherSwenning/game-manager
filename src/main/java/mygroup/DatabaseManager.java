@@ -128,19 +128,14 @@ public class DatabaseManager {
         
         try (Connection conn = DriverManager.getConnection(url, username, password)) {
             System.out.println("Connected to MySQL successfully!");
-            String delete = "DELETE FROM games";
-            String idReset = "ALTER TABLE games AUTO_INCREMENT = 1";
-            String insert = "INSERT INTO games (name, minutes_played, last_played_hours, genres) VALUES (?, ?, ?, ?)";
-            try (PreparedStatement deleteStatement = conn.prepareStatement(delete);
-                PreparedStatement resetStatement = conn.prepareStatement(idReset);
-                PreparedStatement insertStatement = conn.prepareStatement(insert)) {
-                
-                    deleteStatement.executeUpdate();
-                    System.out.println("Existing data deleted successfully");
-
-                    resetStatement.executeUpdate();
-                    System.out.println("id-start reset to 1");
-                
+            
+            String insertOrUpdate = "INSERT INTO games (name, minutes_played, last_played_hours, genres) " +
+                                "VALUES (?, ?, ?, ?) " +
+                                "ON DUPLICATE KEY UPDATE " +
+                                "minutes_played = VALUES(minutes_played), " +
+                                "last_played_hours = VALUES(last_played_hours), " +
+                                "genres = VALUES(genres)";
+            try (PreparedStatement insertStatement = conn.prepareStatement(insertOrUpdate)) {
                     for (Game game : client.getGameList()) {
                         insertStatement.setString(1, game.getName());
                         insertStatement.setString(2, game.getMP());
@@ -176,7 +171,7 @@ public class DatabaseManager {
             for (String query : sqlQueries) {
                 try(PreparedStatement selectStatement = conn.prepareStatement(query)) {
                     ResultSet resultSet = selectStatement.executeQuery();
-                   
+                    System.out.println("Data extracted successfully");
                     convertResultSet(resultSet,query);
                 }catch (SQLException e) {
                     throw new RuntimeException("Error while executing SQL query", e);
