@@ -10,7 +10,28 @@ This Java program fetches data related to your Steam library, processes the data
 - MySQL database set up with a table for storing game data.
 - Three resource text files (urls.txt, config.txt, game_genres.txt) for the program to work.
 ## Configuration
-Before running the program, ensure the following files are configured correctly:
+
+Before running the program, ensure that your database is set up. Run the following SQL queries in your MySQL client or management tool.
+
+```sql
+-- Create the database
+CREATE DATABASE database_name;
+
+-- Use the created database
+USE database_name;
+
+-- Create the games table with appropriate structure and constraints
+CREATE TABLE table_name (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    minutes_played VARCHAR(50),
+    last_played_hours VARCHAR(50),
+    genres VARCHAR(255) DEFAULT 'Unknown',  -- Defaults to 'Unknown' if nothing is provided
+    UNIQUE (name)  -- Ensures no duplicate game names
+);
+```
+
+Ensure the following files are configured correctly:
 
 1. urls.txt
 This file should contain one row on the following format:
