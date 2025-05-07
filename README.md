@@ -92,6 +92,7 @@ When you need full stack-traces, open `AppLogger.java` and in the static block a
 +    ch.setLevel(Level.FINE);
 }
 ```
+Make sure to revert the change outside of debugging.
 ## Notes
 - The program queries MySQL for specific insights. You can modify the queries in the List<String> sqlQueries within the DatabaseManager class if you'd like different results (e.g., a different number of games or genres).
 
