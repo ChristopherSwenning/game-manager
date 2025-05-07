@@ -69,7 +69,7 @@ public class Client {
                 
             }
         }
-        catch(Exception e) {
+        catch(IOException e) {
             throw new RuntimeException("Error processing url from resources", e);
         }
     }

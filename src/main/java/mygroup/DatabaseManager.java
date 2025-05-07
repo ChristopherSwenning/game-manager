@@ -91,7 +91,7 @@ public class DatabaseManager {
                 configs.add(line);
             }
         }
-        catch(Exception e) {
+        catch(IOException e) {
             throw new RuntimeException("Error processing file from resources", e);
         }
         return configs;
