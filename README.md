@@ -78,9 +78,24 @@ Upon successful execution, the program will query the database and write the res
 - The top 50 most played games
 - The 5 most popular game genres (as per the queries in DatabaseManager)
 
+## Enabling debug logging
+
+When you need full stack-traces, open `AppLogger.java` and in the static block apply this diff:
+
+```diff
+--- /src/main/java/mygroup/AppLogger.java
++++ /src/main/java/mygroup/AppLogger.java
+@@ static {
+-    INSTANCE.setLevel(Level.INFO);
+-    ch.setLevel(Level.INFO);
++    INSTANCE.setLevel(Level.FINE);
++    ch.setLevel(Level.FINE);
+}
+```
 ## Notes
 - The program queries MySQL for specific insights. You can modify the queries in the List<String> sqlQueries within the DatabaseManager class if you'd like different results (e.g., a different number of games or genres).
 
 - The program interacts with three main classes: Client, GenreMap, and DatabaseManager. Client fetches the game data from Steam, GenreMap maps games to genres, and DatabaseManager handles database interactions.
 
 - The program is designed to be run via the terminal, so make sure you are running it from the appropriate command line or terminal window.
+
