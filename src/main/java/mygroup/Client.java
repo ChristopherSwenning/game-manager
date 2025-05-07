@@ -106,6 +106,10 @@ public class Client {
     
             // HTTP response
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            int code = response.statusCode();
+            if(code != 200) {
+                throw new IOException("Failed to fetch JSON with status code: " + code);
+            }
     
             //Json String format
             json = response.body();
