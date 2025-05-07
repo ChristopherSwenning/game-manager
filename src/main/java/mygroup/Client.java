@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,23 +55,31 @@ public class Client {
     private void readURLS() {
         InputStream inputstream = Client.class.getClassLoader().getResourceAsStream("urls.txt");
         if (inputstream == null) {
-            throw new RuntimeException("Error loading in file from resources");
+            throw new RuntimeException("Error loading in urls.txt from resources");
         }
         
         try (Scanner scanner = new Scanner(inputstream)) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 String[] splitURLAndKeywords = line.split(" ");
+                if(splitURLAndKeywords.length != 3) {
+                    throw new RuntimeException("Malformed line in urls.txt");
+                }
                 String url = splitURLAndKeywords[0];
                 String[] pathToRoot = splitURLAndKeywords[1].split("-");
                 String[] keywords = splitURLAndKeywords[2].split(",");
                 
-                getData(url, pathToRoot,keywords);
+                try {
+                    getData(url, pathToRoot,keywords);
+                } catch (IOException | InterruptedException e) {
+                    throw new RuntimeException("Failed to fetch JSON", e);
+                }
+               
                 
             }
         }
-        catch(IOException e) {
-            throw new RuntimeException("Error processing url from resources", e);
+        catch(NoSuchElementException | IllegalStateException e) {
+            throw new RuntimeException("Error processing urls.txt from resources", e);
         }
     }
 
@@ -108,7 +117,7 @@ public class Client {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             int code = response.statusCode();
             if(code != 200) {
-                throw new IOException("Failed to fetch JSON with status code: " + code);
+                throw new IOException("Failed to fetch JSON during HTTP request with status code: " + code);
             }
     
             //Json String format

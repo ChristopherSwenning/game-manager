@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -91,7 +92,7 @@ public class DatabaseManager {
                 configs.add(line);
             }
         }
-        catch(IOException e) {
+        catch(NoSuchElementException | IllegalStateException e) {
             throw new RuntimeException("Error processing file from resources", e);
         }
         return configs;
