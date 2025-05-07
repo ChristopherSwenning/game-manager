@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,6 +32,7 @@ public class DatabaseManager {
     private GenreMap genreMap;
     private final List<String> sqlQueries;
     private Map<String,String> resultMap;
+    private static final Logger logger = AppLogger.get();
     
     /**
      * Constructs a DatabaseManager with a Client and GenreMap.
@@ -83,7 +86,7 @@ public class DatabaseManager {
         List<String> configs = new ArrayList<String>();
         InputStream inputstream = Client.class.getClassLoader().getResourceAsStream("config.txt");
         if (inputstream == null) {
-            throw new RuntimeException("Error loading in file from resources");
+            throw new IllegalStateException("Error loading in file from resources");
         }
         
         try (Scanner scanner = new Scanner(inputstream)) {
@@ -92,8 +95,9 @@ public class DatabaseManager {
                 configs.add(line);
             }
         }
-        catch(NoSuchElementException | IllegalStateException e) {
-            throw new RuntimeException("Error processing file from resources", e);
+        catch(NoSuchElementException e) {
+            logger.log(Level.FINE, "Error processing file from resources", e);
+            throw new RuntimeException("Error processing file from resources");
         }
         return configs;
     }
@@ -104,7 +108,7 @@ public class DatabaseManager {
      * @return The username inputted by the user.
      */
     private String readUsername() {
-        System.out.println("Enter MySQL username: ");
+        logger.info("Enter MySQL username: ");
         return new String(System.console().readLine());
     }
     
@@ -114,7 +118,7 @@ public class DatabaseManager {
      * @return The password inputted by the user.
      */
     private String readPassword() {
-        System.out.println("Enter MySQL password: ");
+        logger.info("Enter MySQL password: ");
         return new String(System.console().readPassword());
     }
     
@@ -128,7 +132,7 @@ public class DatabaseManager {
     private void insertData(String url, String username, String password) {
         
         try (Connection conn = DriverManager.getConnection(url, username, password)) {
-            System.out.println("Connected to MySQL successfully!");
+            logger.info("Connected to MySQL successfully!");
             
             String insertOrUpdate = "INSERT INTO games (name, minutes_played, last_played_hours, genres) " +
                                 "VALUES (?, ?, ?, ?) " +
@@ -148,13 +152,15 @@ public class DatabaseManager {
                         insertStatement.executeUpdate();
                     }
                     
-                    System.out.println("Data inserted successfully");
+                    logger.info("Data inserted successfully");
             } catch (SQLException e ) {
-                throw new RuntimeException("Error while executing SQL statement", e);
+                logger.log(Level.FINE, "Error while executing SQL statement", e);
+                throw new RuntimeException("Error while executing SQL statement");
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Error while connecting to MySQL", e);
+            logger.log(Level.FINE, "Error while connecting to MySQL", e);
+            throw new RuntimeException("Error while connecting to MySQL");
         }
     }
     
@@ -168,20 +174,22 @@ public class DatabaseManager {
     private void selectData(String url, String username, String password)  {
         
         try (Connection conn = DriverManager.getConnection(url, username, password)){
-            System.out.println("Connected to MySQL successfully!");
+            logger.info("Connected to MySQL successfully!");
             for (String query : sqlQueries) {
                 try(PreparedStatement selectStatement = conn.prepareStatement(query)) {
                     ResultSet resultSet = selectStatement.executeQuery();
                     
                     convertResultSet(resultSet,query);
                 }catch (SQLException e) {
-                    throw new RuntimeException("Error while executing SQL query", e);
+                    logger.log(Level.FINE, "Error while executing SQL query", e);
+                    throw new RuntimeException("Error while executing SQL query");
                 } 
             }
-            System.out.println("Data extracted successfully");
+            logger.info("Data extracted successfully");
             
         }catch (SQLException e) {
-            throw new RuntimeException("Error while connecting to MySQL", e);
+            logger.log(Level.FINE, "Error while connecting to MySQL", e);
+            throw new RuntimeException("Error while connecting to MySQL");
         }
     }
     
@@ -218,13 +226,15 @@ public class DatabaseManager {
             File file = new File("result.json");
             try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
                 writer.write(json);
-                System.out.println("Data written to result.json");
+                logger.info("Data written to result.json");
             } catch(IOException e) {
-                throw new RuntimeException("Error writing to result.json", e);
+                logger.log(Level.FINE, "Error writing to result.json", e);
+                throw new RuntimeException("Error writing to result.json");
             }
 
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Error processing resultMap", e);
+            logger.log(Level.FINE, "Error writing to result.json", e);
+            throw new RuntimeException("Error processing resultMap");
         }
     }
 }

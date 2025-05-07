@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /**
  * Manages a mapping of game names to their corresponding genres.
@@ -13,6 +15,7 @@ import java.util.Scanner;
 public class GenreMap {
     private Map<String,String> myMap;
     private List<Game> gameList;
+    private static final Logger logger = AppLogger.get();
 
     /**
      * Constructs a GenreMap instance.
@@ -22,6 +25,7 @@ public class GenreMap {
     public GenreMap(List<Game> gameList) {
         myMap = new LinkedHashMap<String,String>();
         this.gameList = gameList;
+        
     }
 
     /**
@@ -32,7 +36,7 @@ public class GenreMap {
     public void addFromResource() {
         InputStream inputstream = Client.class.getClassLoader().getResourceAsStream("game_genres.txt");
         if (inputstream == null) {
-            throw new RuntimeException("Error loading in game_genres.txt from resources");
+            throw new IllegalStateException("Error loading in game_genres.txt from resources");
             
         }
         try (Scanner scanner = new Scanner(inputstream)) {
@@ -40,7 +44,7 @@ public class GenreMap {
                 String line = scanner.nextLine();
                 String[] splitted = line.split("%");
                 if(splitted.length != 2) {
-                    throw new RuntimeException("Malformed line in game_genres.txt");
+                    throw new IllegalArgumentException("Malformed line in game_genres.txt");
                 }
                 String name = splitted[0];
                 String genre = splitted[1];
@@ -53,8 +57,9 @@ public class GenreMap {
                 
             }
         }
-        catch(NoSuchElementException | IllegalStateException e) {
-            throw new RuntimeException("Error processing game_genres.txt from resources",e);
+        catch(NoSuchElementException e) {
+            logger.log(Level.FINE, "Error proccessing game_genres.txt from resources", e);
+            throw new RuntimeException("Error processing game_genres.txt from resources");
         }
 
     }
@@ -70,6 +75,6 @@ public class GenreMap {
      * Prints all stored game-genre mappings to the console.
      */
     public void printMap() {
-        myMap.forEach((key,value) -> System.out.println(key + " " + value));
+        myMap.forEach((key,value) -> logger.info(key + " " + value));
     }
 }

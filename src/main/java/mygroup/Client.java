@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 
 /**
@@ -26,6 +28,7 @@ public class Client {
     private final ObjectMapper objectMapper;
     private Map<String, String> savedData;
     private List<Game> gameList;
+    private static final Logger logger = AppLogger.get();
     
     /**
      * Constructs a new {@code Client} instance, initializing the HTTP client,
@@ -36,6 +39,7 @@ public class Client {
         objectMapper = new ObjectMapper();
         savedData = new HashMap<String,String>();
         gameList = new ArrayList<Game>();
+        
     }
     
     /**
@@ -55,7 +59,7 @@ public class Client {
     private void readURLS() {
         InputStream inputstream = Client.class.getClassLoader().getResourceAsStream("urls.txt");
         if (inputstream == null) {
-            throw new RuntimeException("Error loading in urls.txt from resources");
+            throw new IllegalStateException("Error loading in urls.txt from resources");
         }
         
         try (Scanner scanner = new Scanner(inputstream)) {
@@ -63,7 +67,7 @@ public class Client {
                 String line = scanner.nextLine();
                 String[] splitURLAndKeywords = line.split(" ");
                 if(splitURLAndKeywords.length != 3) {
-                    throw new RuntimeException("Malformed line in urls.txt");
+                    throw new IllegalArgumentException("Malformed line in urls.txt");
                 }
                 String url = splitURLAndKeywords[0];
                 String[] pathToRoot = splitURLAndKeywords[1].split("-");
@@ -72,14 +76,16 @@ public class Client {
                 try {
                     getData(url, pathToRoot,keywords);
                 } catch (IOException | InterruptedException e) {
-                    throw new RuntimeException("Failed to fetch JSON", e);
+                    logger.log(Level.FINE, "Failed to fetch JSON", e);
+                    throw new RuntimeException("Failed to fetch JSON");
                 }
                
                 
             }
         }
-        catch(NoSuchElementException | IllegalStateException e) {
-            throw new RuntimeException("Error processing urls.txt from resources", e);
+        catch(NoSuchElementException e) {
+            logger.log(Level.FINE, "Error processing urls.text from resources", e);
+            throw new RuntimeException("Error processing urls.txt from resources");
         }
     }
 
@@ -124,7 +130,7 @@ public class Client {
             json = response.body();
             //size check to see if tree traversal is efficient in terms of memory usage
             int jsonSizeInBytes = json.getBytes(StandardCharsets.UTF_8).length;
-            System.out.println("Size of JSON in bytes: " + jsonSizeInBytes);
+            logger.info("Size of JSON in bytes: " + jsonSizeInBytes);
             
     
         }else {
@@ -177,7 +183,7 @@ public class Client {
      */
     public void printList() {
         for (Game game : gameList) {
-            System.out.println(game.getName() + ", " + game.getMP() + ", " + game.getLPE());
+            logger.info(game.getName() + ", " + game.getMP() + ", " + game.getLPE());
         }
     }
     
