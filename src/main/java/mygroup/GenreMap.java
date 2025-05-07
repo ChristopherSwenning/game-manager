@@ -3,10 +3,9 @@ import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.logging.Logger;
-import java.util.logging.Level;
+
 
 /**
  * Manages a mapping of game names to their corresponding genres.
@@ -57,10 +56,7 @@ public class GenreMap {
                 
             }
         }
-        catch(NoSuchElementException e) {
-            logger.log(Level.FINE, "Error proccessing game_genres.txt from resources", e);
-            throw new RuntimeException("Error processing game_genres.txt from resources");
-        }
+       
 
     }
     /**

@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -75,17 +74,17 @@ public class Client {
                 
                 try {
                     getData(url, pathToRoot,keywords);
-                } catch (IOException | InterruptedException e) {
-                    logger.log(Level.FINE, "Failed to fetch JSON", e);
-                    throw new RuntimeException("Failed to fetch JSON");
+                } catch (IOException ioe) {
+                    logger.log(Level.FINE, "I/O failure fetching JSON", ioe);
+                    throw new RuntimeException("I/O failure fetching JSON");
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    logger.log(Level.FINE, "Interrupted while fetching JSON", ie);
+                    throw new RuntimeException("Interrupted while fetching JSON");
                 }
                
                 
             }
-        }
-        catch(NoSuchElementException e) {
-            logger.log(Level.FINE, "Error processing urls.text from resources", e);
-            throw new RuntimeException("Error processing urls.txt from resources");
         }
     }
 
